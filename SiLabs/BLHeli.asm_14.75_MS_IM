@@ -251,7 +251,7 @@ $NOMOD51
 ;           Some small changes for improved sync hold
 ;	-Rev14.75 Modified input signal accept Multishot protocol
 ;						Changed Defaults to more acceptable/appropriate values	
-;						Modified beeps to use the "Pit Stop" or "Fast Start" style tones
+;						Added music routine and changed startup tone to "Imperial March"
 ;
 ;**** **** **** **** ****
 ; Up to 8K Bytes of In-System Self-Programmable Flash
