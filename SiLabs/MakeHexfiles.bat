@@ -218,12 +218,12 @@ goto :end
 
 
 :compile
-SET BESC="%BESCNAME%_MAIN"
-SET /A BESCNO+=1
-call :compile2
-SET BESC="%BESCNAME%_TAIL"
-SET /A BESCNO+=1
-call:compile2
+rem SET BESC="%BESCNAME%_MAIN"
+rem SET /A BESCNO+=1
+rem call :compile2
+rem SET BESC="%BESCNAME%_TAIL"
+rem SET /A BESCNO+=1
+rem call:compile2
 SET BESC="%BESCNAME%_MULTI"
 SET /A BESCNO+=1
 call:compile2
