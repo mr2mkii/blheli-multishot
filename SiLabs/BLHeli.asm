@@ -249,9 +249,9 @@ $NOMOD51
 ;           In order to have a good code for fixed wing planes, that has low voltage limiting, a main code spoolup time setting of 0 is made fast
 ;           Improved protection of bootloader and generally reduced risk of flash corruption
 ;           Some small changes for improved sync hold
-;	-Rev14.75 Modified input signal accept Multishot protocol
-;						Changed Defaults to more acceptable/appropriate values	
-;						Modified beeps to use the "Pit Stop" or "Fast Start" style tones
+; -Rev14.75 Modified input signal routine to accept Multishot protocol only (add protocol detection?)
+;						Changed Defaults to prefered values	
+;						Modified status beeps to "Pit Stop" or "Fast Start" for shorter boot/restart time.
 ;
 ;**** **** **** **** ****
 ; Up to 8K Bytes of In-System Self-Programmable Flash
@@ -4202,7 +4202,7 @@ beep_anfet_off:
 	jnb	ACC.0, beep_cnfet_off
 	CnFET_off			; CnFET off
 beep_cnfet_off:
-	mov	A, #150		; 25µs off
+	mov	A, #150		; 25Âµs off
 	djnz	ACC, $		
 	djnz	Temp2, beep_onoff
 	; Copy variable
