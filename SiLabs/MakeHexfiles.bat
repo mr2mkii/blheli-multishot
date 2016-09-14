@@ -219,10 +219,10 @@ goto :end
 
 :compile
 rem SET BESC="%BESCNAME%_MAIN"
-rem SET /A BESCNO+=1
+SET /A BESCNO+=1
 rem call :compile2
 rem SET BESC="%BESCNAME%_TAIL_MS"
-rem SET /A BESCNO+=1
+SET /A BESCNO+=1
 rem call:compile2
 SET BESC="%BESCNAME%_MULTISHOT"
 SET /A BESCNO+=1
