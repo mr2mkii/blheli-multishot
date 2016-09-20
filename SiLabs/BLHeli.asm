@@ -251,7 +251,7 @@ $NOMOD51
 ;           Some small changes for improved sync hold
 ;	-Rev14.75 Modified input signal accept Multishot protocol
 ;						Changed Defaults to more acceptable/appropriate values	
-;						Added music routine and changed startup tone to "Imperial March"
+;						Modified beeps to use the "Pit Stop" or "Fast Start" style tones
 ;
 ;**** **** **** **** ****
 ; Up to 8K Bytes of In-System Self-Programmable Flash
@@ -2355,24 +2355,24 @@ DEFAULT_PGM_MULTI_PWM_FREQ	 	EQU 3 	; 1=High 		2=Low 		3=DampedLight
 ELSE
 DEFAULT_PGM_MULTI_PWM_FREQ	 	EQU 1 	; 1=High 		2=Low
 ENDIF
-DEFAULT_PGM_MULTI_DEMAG_COMP 		EQU 3 	; 1=Disabled	2=Low		3=High
+DEFAULT_PGM_MULTI_DEMAG_COMP 		EQU 2 	; 1=Disabled	2=Low		3=High
 DEFAULT_PGM_MULTI_DIRECTION		EQU 1 	; 1=Normal 	2=Reversed	3=Bidirectional
 DEFAULT_PGM_MULTI_RCP_PWM_POL 	EQU 1 	; 1=Positive 	2=Negative
-DEFAULT_PGM_MULTI_BEEP_STRENGTH	EQU 80	; Beep strength
+DEFAULT_PGM_MULTI_BEEP_STRENGTH	EQU 40	; Beep strength
 DEFAULT_PGM_MULTI_BEACON_STRENGTH	EQU 80	; Beacon strength
 DEFAULT_PGM_MULTI_BEACON_DELAY	EQU 4 	; 1=1m		2=2m			3=5m			4=10m		5=Infinite
 DEFAULT_PGM_MULTI_PWM_DITHER		EQU 3 	; 1=Off		2=3			3=7			4=15			5=31
 
 ; COMMON
 DEFAULT_PGM_ENABLE_TX_PROGRAM 	EQU 1 	; 1=Enabled 	0=Disabled
-DEFAULT_PGM_PPM_MIN_THROTTLE		EQU 10	; 4*10+1000=1040
-DEFAULT_PGM_PPM_MAX_THROTTLE		EQU 240	; 4*240+1000=1960
-DEFAULT_PGM_PPM_CENTER_THROTTLE	EQU 125	; 4*125+1000=1500 (used in bidirectional mode)
+DEFAULT_PGM_PPM_MIN_THROTTLE		EQU 37	; 4*37+1000=1148
+DEFAULT_PGM_PPM_MAX_THROTTLE		EQU 208	; 4*208+1000=1832
+DEFAULT_PGM_PPM_CENTER_THROTTLE	EQU 122	; 4*122+1000=1488 (used in bidirectional mode)
 DEFAULT_PGM_BEC_VOLTAGE_HIGH		EQU 0	; 0=Low		1+= High or higher	
 DEFAULT_PGM_ENABLE_TEMP_PROT	 	EQU 1 	; 1=Enabled 	0=Disabled
 DEFAULT_PGM_ENABLE_POWER_PROT 	EQU 1 	; 1=Enabled 	0=Disabled
 DEFAULT_PGM_ENABLE_PWM_INPUT	 	EQU 0 	; 1=Enabled 	0=Disabled
-DEFAULT_PGM_BRAKE_ON_STOP	 	EQU 1 	; 1=Enabled 	0=Disabled
+DEFAULT_PGM_BRAKE_ON_STOP	 	EQU 0 	; 1=Enabled 	0=Disabled
 
 ;**** **** **** **** ****
 ; Constant definitions for main
@@ -3790,25 +3790,26 @@ pca_int_fall:
 	
 	; Rescale our Multishot signal to a Oneshot125 Signal range		
 	
-	clr	C						; clear carry flag		
+	clr	C			; clear carry flag		
 	mov	A, Temp2		; move signal high-byte to accumulator - you shouldnt need this as the Acc still contains
-	rrc	A						; rotate right through the carry flag		
+	rrc	A			; rotate right through the carry flag		
 	mov	Temp2, A		; Move result to Temp2		
 	mov	A, Temp1		; Move signal low-byte to accumulator		
-	rrc	A						; rotate right through the carry flag		
+	rrc	A			; rotate right through the carry flag		
 	mov	Temp1, A		; Move result to Temp1 		
-									;60-300; 61-306		
-	clr	C						; clear carry flag		
-  mov A,	Temp1   ;subtract 180		
-  add A,	#180    ;Add the second low-byte to the accumulator		
-  mov Temp5,	A   ;Move the answer to the low-byte of the result		
-  mov A,	Temp2   ;Move the high-byte into the accumulator		
-  addc A,	#0     	;Add the second high-byte to the accumulator, plus carry.		
-  mov Temp6,	A   ;Move the answer to the high-byte of the result		
-									;240 - 480		
-	ajmp	pca_int_fall_check_range 	; consider this a valid MS signal - move to I_Temp5/6 		
+					;60-300; 61-306		
+	clr	C					; clear carry flag		
+  mov A,	Temp1    		;subtract 180		
+  add A,	#180     		;Add the second low-byte to the accumulator		
+  mov Temp5,	A    		;Move the answer to the low-byte of the result		
+  mov A,	Temp2    		;Move the high-byte into the accumulator		
+  addc A,	#0     			;Add the second high-byte to the accumulator, plus carry.		
+  mov Temp6,	A    		;Move the answer to the high-byte of the result		
+											;240 - 480		
+	ajmp	pca_int_fall_check_range;   consider this a valid MS signal - move to I_Temp5/6 		
 					
 	; End Multishot to Oneshot Signal Scaling		
+
 
 pca_int_fall_not_oneshot:
 	mov	A, Temp2						; No - 2kHz. Divide by 2
@@ -7173,100 +7174,7 @@ average_throttle_div:
 	call	find_throttle_gain	; Set throttle gain
 	ret
 
-;**** **** **** **** **** **** **** **** **** **** **** **** ****
-;		Music Routines
-;
-;
-;**** **** **** **** **** **** **** **** **** **** **** **** ****
 
-music_f1:
-	mov	Temp3, #222 
-music_f1_beep:
-	ApFET_on
-	CnFET_on
-	mov	A, #75		
-	djnz	ACC, $
-	CnFET_off
-	ApFET_off
-
-;X*1ms to wait
-	mov	Temp2, #2 
-wait_ms_1_o_m1:	
-	mov	Temp1, #23
-wait_ms_1_m_m1:	
-	clr	A
- 	djnz	ACC, $	
-	djnz	Temp1, wait_ms_1_m_m1
-	djnz	Temp2, wait_ms_1_o_m1
-
-;X*5us to wait
-	mov	Temp2, #110
-wait_us_100_m1:
-	mov	A, #30		
-	djnz	ACC, $
-	djnz	Temp2, wait_us_100_m1
-
-	djnz	Temp3, music_f1_beep 
-	ret
-
-
-music_f2:
-	mov	Temp3, #132 
-music_f2_beep:
-	ApFET_on
-	CnFET_on
-	mov	A, #75
-	djnz	ACC, $
-	CnFET_off
-	ApFET_off
-
-;X*1ms to wait
-	mov	Temp2, #3 
-wait_ms_1_o_m2:	
-	mov	Temp1, #23
-wait_ms_1_m_m2:
-	clr	A
- 	djnz	ACC, $
-	djnz	Temp1, wait_ms_1_m_m2
-	djnz	Temp2, wait_ms_1_o_m2
-
-;X*5us to wait
-	mov	Temp2, #43
-wait_us_100_m2:
-	mov	A, #30		
-	djnz	ACC, $
-	djnz	Temp2, wait_us_100_m2
-	djnz	Temp3, music_f2_beep 
-	ret
-
-
-music_f3:
-	mov	Temp3, #132 
-music_f3_beep:
-	ApFET_on
-	CnFET_on
-	mov	A, #75	
-	djnz	ACC, $
-	CnFET_off
-	ApFET_off
-
-;X*1ms to wait
-	mov	Temp2, #2
-wait_ms_1_o_m3:	
-	mov	Temp1, #23
-wait_ms_1_m_m3:	
-	clr	A
- 	djnz	ACC, $	
-	djnz	Temp1, wait_ms_1_m_m3
-	djnz	Temp2, wait_ms_1_o_m3
-
-	mov	Temp2, #29
-wait_us_100_m3:
-	mov	A, #30		
-	djnz	ACC, $
-	djnz	Temp2, wait_us_100_m3
-	djnz	Temp3, music_f3_beep
-	ret
 
 
 ;**** **** **** **** **** **** **** **** **** **** **** **** ****
@@ -7313,7 +7221,7 @@ lock_byte_ok:
 	; Disable the WDT.
 IF SIGNATURE_001 == 0f3h		
 	anl	PCA0MD, #NOT(40h)	; Clear watchdog enable bit
-	mov	PCA0MD, #0x08     ; PCA0MD divider to Sysclock instead of sysclock / 12 - Multishot
+	mov	PCA0MD, #0x08     ; Multishot
 ENDIF
 IF SIGNATURE_001 == 0f8h		
 	mov	WDTCN, #0DEh		; Disable watchdog
@@ -7401,23 +7309,8 @@ clear_ram:
 	mov	Initial_Arm, #1
 	; Initializing beep
 	clr	EA				; Disable interrupts explicitly
-
-  call wait200ms
-	call music_f1
-	call wait100ms
-	call music_f1
-	call wait100ms
-	call music_f1
-	call wait100ms
-	call music_f2
-	call music_f3
-	call music_f1
-	call wait100ms
-	call music_f2
-	call music_f3
-	call music_f1
-	call music_f1
-
+	call wait30ms
+	call beep_f3
 IF MODE <= 1	; Main or tail
 	; Wait for receiver to initialize
 	call	wait1s
@@ -7781,8 +7674,7 @@ arm_target_updated:
 arm_end_beep:
 	; Beep arm sequence end signal
 	clr 	EA					; Disable all interrupts
-	call beep_f4			; Signal that rcpulse is ready
-	call beep_f4
+	call beep_f4				; Signal that rcpulse is ready
 	setb	EA					; Enable all interrupts
 	call wait200ms
 
