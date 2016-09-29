@@ -1,5 +1,5 @@
 @ECHO off
-@ECHO ***** Batch file for BlHeli (from 4712)  v.3           *****
+@ECHO ***** Batch file for BlHeli (from 4712)  v.2           *****
 @ECHO ***** All Messages will be saved to MakeHex_Result.txt *****
 @ECHO ***** Start compile with any key  - CTRL-C to abort    *****
 Break ON
@@ -7,52 +7,23 @@ Break ON
 DEL MakeHex_Result.txt /Q
 
 rem ***** Adapt settings to your enviroment ****
+DEL Output\Hex\*.* /Q
+RMDIR Output\Hex
+DEL Output\*.* /Q
+RMDIR Output
+MKDIR Output
+MKDIR Output\Hex
 SET Revision=REV14_75
 SET SilabsPath=C:\SiLabs
 SET RaisonancePath=C:\Raisonance
 rem SET SilabsPath=C:\Dev\SiLabs
 rem SET RaisonancePath=C:\Dev\Raisonance
 
-SET CRAZY_FAST_START_PATH=Hex files %Revision%\MultiShot_Crazy_FastStart
-SET FAST_START_PATH=Hex files %Revision%\Multishot_Fast_Start
-SET IMPERIAL_MARCH_PATH=Hex files %Revision%\Multishot_Imperial_March
-
-DEL "%CRAZY_FAST_START_PATH%\*.*" /Q
-RMDIR "%CRAZY_FAST_START_PATH%"
-MKDIR "%CRAZY_FAST_START_PATH%"
-
-DEL "%FAST_START_PATH%\*.*" /Q
-RMDIR "%FAST_START_PATH%"
-MKDIR "%FAST_START_PATH%"
-
-DEL "%IMPERIAL_MARCH_PATH%\*.*" /Q
-RMDIR "%IMPERIAL_MARCH_PATH%"
-MKDIR "%IMPERIAL_MARCH_PATH%"
-
-DEL Output\*.* /Q
-RMDIR Output
-MKDIR Output\
-
 @ECHO Revision: %Revision% >> MakeHex_Result.txt
 @ECHO Path for Silabs IDE: %SilabsPath% >> MakeHex_Result.txt
 @ECHO Path for Raisonance IDE: %RaisonancePath% >> MakeHex_Result.txt
 @ECHO Start compile ..... >> MakeHex_Result.txt
 
-SET BLHELI_ASM=BLHeli_MS_CZFS
-SET HEX_PATH=%CRAZY_FAST_START_PATH%
-call :compile0
-
-SET BLHELI_ASM=BLHeli_MS_FS
-SET HEX_PATH=%FAST_START_PATH%
-call :compile0
-
-SET BLHELI_ASM=BLHeli_MS_IM
-SET HEX_PATH=%IMPERIAL_MARCH_PATH%
-call :compile0
-
-goto :end
-
-:compile0
 SET BESCNO=0
 SET BESCNAME=XP_3A
 call:compile
@@ -244,7 +215,9 @@ SET BESCNAME=HTIRC_HUMMINGBIRD_20A
 call:compile
 SET BESCNAME=HTIRC_HUMMINGBIRD_30A_PRO
 call:compile
-goto :eof
+
+goto :end
+
 
 :compile
 rem SET BESC="%BESCNAME%_MAIN"
@@ -264,10 +237,10 @@ goto :eof
 @ECHO ********************************************************************  >> MakeHex_Result.txt
 @ECHO %BESCNAME%  >> MakeHex_Result.txt
 @ECHO ********************************************************************  >> MakeHex_Result.txt
-%RaisonancePath%\Ride\bin\ma51.exe "%BLHELI_ASM%.asm" SET(BESCNO=%BESCNO%) OBJECT(Output\%BESCNAME%_%Revision%.OBJ) DEBUG EP QUIET PIN(%SilabsPath%\MCU\Inc;%RaisonancePath%\Ride\inc;%RaisonancePath%\Ride\inc\51) >> MakeHex_Result.txt
+%RaisonancePath%\Ride\bin\ma51.exe "BLHeli.asm" SET(BESCNO=%BESCNO%) OBJECT(Output\%BESCNAME%_%Revision%.OBJ) DEBUG EP QUIET PIN(%SilabsPath%\MCU\Inc;%RaisonancePath%\Ride\inc;%RaisonancePath%\Ride\inc\51) >> MakeHex_Result.txt
 %RaisonancePath%\Ride\bin\lx51.exe "Output\%BESCNAME%_%Revision%.OBJ"  TO(Output\%BESCNAME%_%Revision%.OMF) RS(256) PL(68) PW(78) OUTPUTSUMMARY LIBPATH(%RaisonancePath%\Ride\lib\51) >> MakeHex_Result.txt
 %RaisonancePath%\Ride\bin\oh51.exe "Output\%BESCNAME%_%Revision%.OMF" >> MakeHex_Result.txt 
-copy "Output\%BESCNAME%_%Revision%.HEX" "%HEX_PATH%\%BESC%_%Revision%.HEX" > nul
+copy "Output\%BESCNAME%_%Revision%.HEX" "Output\Hex\%BESC%_%Revision%.HEX" > nul
 del "Output\%BESCNAME%_%Revision%.HEX" > nul
 @ECHO. >> MakeHex_Result.txt
 goto :eof
@@ -275,9 +248,4 @@ goto :eof
 :end
 
 @pause
-DEL *.LST /Q
-DEL Output\*.* /Q
-RMDIR Output
-MKDIR Output\
-
 exit

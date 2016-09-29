@@ -2355,24 +2355,24 @@ DEFAULT_PGM_MULTI_PWM_FREQ	 	EQU 3 	; 1=High 		2=Low 		3=DampedLight
 ELSE
 DEFAULT_PGM_MULTI_PWM_FREQ	 	EQU 1 	; 1=High 		2=Low
 ENDIF
-DEFAULT_PGM_MULTI_DEMAG_COMP 		EQU 3 	; 1=Disabled	2=Low		3=High
+DEFAULT_PGM_MULTI_DEMAG_COMP 		EQU 2 	; 1=Disabled	2=Low		3=High
 DEFAULT_PGM_MULTI_DIRECTION		EQU 1 	; 1=Normal 	2=Reversed	3=Bidirectional
 DEFAULT_PGM_MULTI_RCP_PWM_POL 	EQU 1 	; 1=Positive 	2=Negative
-DEFAULT_PGM_MULTI_BEEP_STRENGTH	EQU 80	; Beep strength
+DEFAULT_PGM_MULTI_BEEP_STRENGTH	EQU 40	; Beep strength
 DEFAULT_PGM_MULTI_BEACON_STRENGTH	EQU 80	; Beacon strength
 DEFAULT_PGM_MULTI_BEACON_DELAY	EQU 4 	; 1=1m		2=2m			3=5m			4=10m		5=Infinite
 DEFAULT_PGM_MULTI_PWM_DITHER		EQU 3 	; 1=Off		2=3			3=7			4=15			5=31
 
 ; COMMON
 DEFAULT_PGM_ENABLE_TX_PROGRAM 	EQU 1 	; 1=Enabled 	0=Disabled
-DEFAULT_PGM_PPM_MIN_THROTTLE		EQU 10	; 4*10+1000=1040
-DEFAULT_PGM_PPM_MAX_THROTTLE		EQU 245	; 4*245+1000=1960
-DEFAULT_PGM_PPM_CENTER_THROTTLE	EQU 125	; 4*125+1000=1500 (used in bidirectional mode)
+DEFAULT_PGM_PPM_MIN_THROTTLE		EQU 37	; 4*37+1000=1148
+DEFAULT_PGM_PPM_MAX_THROTTLE		EQU 208	; 4*208+1000=1832
+DEFAULT_PGM_PPM_CENTER_THROTTLE	EQU 122	; 4*122+1000=1488 (used in bidirectional mode)
 DEFAULT_PGM_BEC_VOLTAGE_HIGH		EQU 0	; 0=Low		1+= High or higher	
 DEFAULT_PGM_ENABLE_TEMP_PROT	 	EQU 1 	; 1=Enabled 	0=Disabled
 DEFAULT_PGM_ENABLE_POWER_PROT 	EQU 1 	; 1=Enabled 	0=Disabled
 DEFAULT_PGM_ENABLE_PWM_INPUT	 	EQU 0 	; 1=Enabled 	0=Disabled
-DEFAULT_PGM_BRAKE_ON_STOP	 	EQU 1 	; 1=Enabled 	0=Disabled
+DEFAULT_PGM_BRAKE_ON_STOP	 	EQU 0 	; 1=Enabled 	0=Disabled
 
 ;**** **** **** **** ****
 ; Constant definitions for main
@@ -3789,7 +3789,7 @@ pca_int_fall:
 	mov	Temp2, A
 	
 	; Rescale our Multishot signal to a Oneshot125 Signal range		
-	;		
+	
 	clr	C			; clear carry flag		
 	mov	A, Temp2		; move signal high-byte to accumulator - you shouldnt need this as the Acc still contains
 	rrc	A			; rotate right through the carry flag		
@@ -3807,10 +3807,9 @@ pca_int_fall:
   mov Temp6,	A    		;Move the answer to the high-byte of the result		
 											;240 - 480		
 	ajmp	pca_int_fall_check_range;   consider this a valid MS signal - move to I_Temp5/6 		
-			
-;		
-; end Multishot -> Oneshot Signal Scaling		
-;
+					
+	; End Multishot to Oneshot Signal Scaling		
+
 
 pca_int_fall_not_oneshot:
 	mov	A, Temp2						; No - 2kHz. Divide by 2
@@ -4143,78 +4142,79 @@ waitxms_m:	; Middle loop
 
 
 ;**** **** **** **** **** **** **** **** **** **** **** **** ****
-;		Music Routines
+;
+; Beeper routines (4 different entry points) 
+;
+; No assumptions
 ;
 ;**** **** **** **** **** **** **** **** **** **** **** **** ****
+beep_f1:	; Entry point 1, load beeper frequency 1 settings
+	mov	Temp3, #20	; Off wait loop length
+	mov	Temp4, #120	; Number of beep pulses
+	jmp	beep
 
-beep_f1:
-  mov	Temp3, #80   	; total tone play length
-	mov	Temp5, #120   		; number of delay loops to set starting frequency, frequency will increase as count is decremented.
-	mov Temp4, #4				; number of times to repeat tone at each fequency.
-	jmp music_outer_loop
-	
-beep_f2:
-	mov	Temp3, #60
-	mov	Temp5, #60
-	mov Temp4, #3
-	jmp music_outer_loop
-	
-beep_f3:
-	mov	Temp3, #60
-	mov	Temp5, #50
-	mov Temp4, #10
-	jmp music_outer_loop
+beep_f2:	; Entry point 2, load beeper frequency 2 settings
+	mov	Temp3, #16
+	mov	Temp4, #140
+	jmp	beep
 
-beep_f4:
-  mov	Temp3, #4
-	mov	Temp5, #90
-	mov Temp4, #80
-	jmp music_outer_loop
-	
-music_outer_loop:
- 	mov	A, Beep_Strength
+beep_f3:	; Entry point 3, load beeper frequency 3 settings
+	mov	Temp3, #13
+	mov	Temp4, #180
+	jmp	beep
+
+beep_f4:	; Entry point 4, load beeper frequency 4 settings
+	mov	Temp3, #11
+	mov	Temp4, #200
+	jmp	beep
+
+beep:	; Beep loop start
+	mov	A, Beep_Strength
 	djnz	ACC, beep_start 
 	ret
-	
-beep_start:	
-	mov A, Temp4
-	mov Temp1, A			; load temp1 with temp4 value, work with temp1 preserve temp4.
-	dec Temp5
-	
-music_inner_loop:
-		Mov A, Temp5 		; push variables onto the stack to preserve them during fet on/off macro
-		Push ACC
-		Mov A, Temp1
-		Push ACC
-	
-		ApFET_on
-		CnFET_on
-		mov	A, Beep_Strength	;volume
-		djnz	ACC, $
-		CnFET_off
-		ApFET_off
 
-		Pop ACC				; pop variables off the stack, and restore them.
-		Mov Temp1, A  
-  	Pop B				  
-		Mov Temp5, B  
-		Mov Temp2, B  ; make copy of temp5 to work with.
-	 		
-; run minimum delay loop to keep our tone within the frquency range we're after (~3khz-800hz ideally)
-	 	mov Temp7, #10    ; number of times to run min delay loop (sets highest frequency note)
-music_base_delay:
-		mov	A, #180													  ;30us wait
-		djnz	ACC, $												; timing delay
-		djnz	Temp7, music_base_delay        			  ; ~300us delay loop 
-
-music_variable_delay:														; changing delay (adjust tone frequency)
-			mov	A, #102														; 17us wait
-			djnz	ACC, $                        ; timing delay
-		djnz	Temp2, music_variable_delay  				  ; run this loop #Temp5 times
-	djnz	Temp1, music_inner_loop
-djnz	Temp3, music_outer_loop				      ; total length of tone
-
-ret
+beep_start:    
+	mov	Temp2, #2	
+beep_onoff:
+	clr	A
+	BpFET_off			; BpFET off
+	djnz	ACC, $		; Allow some time after pfet is turned off
+	BnFET_on			; BnFET on (in order to charge the driver of the BpFET)
+	djnz	ACC, $		; Let the nfet be turned on a while
+	BnFET_off			; BnFET off again
+	djnz	ACC, $		; Allow some time after nfet is turned off
+	BpFET_on			; BpFET on
+	djnz	ACC, $		; Allow some time after pfet is turned on
+	; Turn on nfet
+	mov	A, Temp2
+	jb	ACC.0, beep_anfet_on
+	AnFET_on			; AnFET on
+beep_anfet_on:
+	jnb	ACC.0, beep_cnfet_on
+	CnFET_on			; CnFET on
+beep_cnfet_on:
+	mov	A, Beep_Strength
+	djnz	ACC, $		
+	; Turn off nfet
+	mov	A, Temp2
+	jb	ACC.0, beep_anfet_off
+	AnFET_off			; AnFET off
+beep_anfet_off:
+	jnb	ACC.0, beep_cnfet_off
+	CnFET_off			; CnFET off
+beep_cnfet_off:
+	mov	A, #150		; 25µs off
+	djnz	ACC, $		
+	djnz	Temp2, beep_onoff
+	; Copy variable
+	mov	A, Temp3
+	mov	Temp1, A	
+beep_off:		; Fets off loop
+	djnz	ACC, $
+	djnz	Temp1,	beep_off
+	djnz	Temp4,	beep
+	BpFET_off			; BpFET off
+	ret
 
 
 ;**** **** **** **** **** **** **** **** **** **** **** **** ****
@@ -4757,7 +4757,7 @@ calc_governor_prop_correction:
 	mov	A, Temp2
 	subb	A, #0FFh
 	jc	governor_limit_prop_corr_neg	; Yes - limit
-	ljmp	governor_apply_prop_corr
+	ajmp	governor_apply_prop_corr
 
 governor_check_prop_corr_limit_pos:
 	clr	C
@@ -7473,7 +7473,8 @@ validate_rcp_start:
 
 	; Beep arm sequence start signal
 	clr 	EA							; Disable all interrupts
-	call beep_f4						; Signal that RC pulse is ready
+	call beep_f1						; Signal that RC pulse is ready
+	call beep_f1
 	setb	EA							; Enable all interrupts
 	call wait200ms	
 
