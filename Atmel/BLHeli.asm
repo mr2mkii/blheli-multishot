@@ -137,6 +137,7 @@
 ;           Throttle cal difference is checked to be above required minimum before storing. Throttle cal max is not stored until successful min throttle cal
 ;           In order to have a good code for fixed wing planes, that has low voltage limiting, a main code spoolup time setting of 0 is made fast
 ;           Some small changes for improved sync hold
+; - Rev14.8 No change, just created to stay in sync with SiLabs code
 ;
 ;
 ;
@@ -317,6 +318,12 @@
 ;#define HTIRC_DRAGONFLY_40A_MAIN
 ;#define HTIRC_DRAGONFLY_40A_TAIL
 ;#define HTIRC_DRAGONFLY_40A_MULTI 
+;#define TBS_BULLETPROOF_4A_MAIN			; ICP1 as input		
+;#define TBS_BULLETPROOF_4A_TAIL
+;#define TBS_BULLETPROOF_4A_MULTI
+;#define TBS_BULLETPROOF_30A_MAIN			; ICP1 as input		
+;#define TBS_BULLETPROOF_30A_TAIL
+;#define TBS_BULLETPROOF_30A_MULTI
 
 
 
@@ -1012,6 +1019,38 @@
 .INCLUDE "Htirc_Dragonfly_40A.inc"		; Select HTIRC Dragonfly 40A pinout
 #endif
 
+#if defined(TBS_BULLETPROOF_4A_MAIN)
+.EQU	MODE 	= 	0			; Choose mode. Set to 0 for main motor
+.INCLUDE "TBS_BULLETPROOF_4A.inc"	; Select TBS BULLETPROOF 4A pinout
+#endif
+
+#if defined(TBS_BULLETPROOF_4A_TAIL)
+.EQU	MODE 	= 	1			; Choose mode. Set to 1 for tail motor
+.INCLUDE "TBS_BULLETPROOF_4A.inc"	; Select TBS BULLETPROOF 4A pinout
+#endif
+
+#if defined(TBS_BULLETPROOF_4A_MULTI)
+.EQU	MODE 	= 	2			; Choose mode. Set to 2 for multirotor
+.INCLUDE "TBS_BULLETPROOF_4A.inc"	; Select TBS BULLETPROOF 4A pinout
+#endif
+
+#if defined(TBS_BULLETPROOF_30A_MAIN)
+.EQU	MODE 	= 	0			; Choose mode. Set to 0 for main motor
+.INCLUDE "TBS_BULLETPROOF_30A.inc"	; Select TBS BULLETPROOF 30A pinout
+#endif
+
+#if defined(TBS_BULLETPROOF_30A_TAIL)
+.EQU	MODE 	= 	1			; Choose mode. Set to 1 for tail motor
+.INCLUDE "TBS_BULLETPROOF_30A.inc"	; Select TBS BULLETPROOF 30A pinout
+#endif
+
+#if defined(TBS_BULLETPROOF_30A_MULTI)
+.EQU	MODE 	= 	2			; Choose mode. Set to 2 for multirotor
+.INCLUDE "TBS_BULLETPROOF_30A.inc"	; Select TBS BULLETPROOF 30A pinout
+#endif
+
+
+
 
 
 ;**** **** **** **** ****
@@ -1381,7 +1420,7 @@ Pgm_Startup_Pwr_Decoded:		.BYTE	1		; Programmed startup power decoded
 .ORG 0				
 
 .EQU	EEPROM_FW_MAIN_REVISION		=	14		; Main revision of the firmware
-.EQU	EEPROM_FW_SUB_REVISION		=	7		; Sub revision of the firmware
+.EQU	EEPROM_FW_SUB_REVISION		=	8		; Sub revision of the firmware
 .EQU	EEPROM_LAYOUT_REVISION		=	21		; Revision of the EEPROM layout
 
 Eep_FW_Main_Revision:		.DB	EEPROM_FW_MAIN_REVISION			; EEPROM firmware main revision number

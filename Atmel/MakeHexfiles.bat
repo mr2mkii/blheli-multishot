@@ -16,7 +16,7 @@ RMDIR Output
 MKDIR Output
 MKDIR Output\Hex
 MKDIR Output\Eep
-SET Revision=REV14_7
+SET Revision=REV14_8
 SET AtmelPath=C:\Atmel\avrassembler
 rem SET AtmelPath="C:\Dev\Atmel\AVR Tools\AvrAssembler2"
 
@@ -115,6 +115,10 @@ call :compile
 SET NAME=HTIRC_DRAGONFLY_30A
 call :compile
 SET NAME=HTIRC_DRAGONFLY_40A
+call :compile
+SET NAME=TBS_BULLETPROOF_4A
+call :compile
+SET NAME=TBS_BULLETPROOF_30A
 call :compile
 
 goto :end

@@ -7,7 +7,7 @@ Break ON
 DEL MakeHex_Result.txt /Q
 
 rem ***** Adapt settings to your enviroment ****
-SET Revision=REV14_75
+SET Revision=REV14_85
 SET SilabsPath=C:\SiLabs
 SET RaisonancePath=C:\Raisonance
 rem SET SilabsPath=C:\Dev\SiLabs

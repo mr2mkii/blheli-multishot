@@ -252,6 +252,9 @@ $NOMOD51
 ;	-Rev14.75 Modified input signal accept Multishot protocol
 ;						Changed Defaults to more acceptable/appropriate values	
 ;						Modified beeps to use the "Pit Stop" or "Fast Start" style tones
+; - Rev14.8 Fixed bug where bootloader operation could be blocked by a defective "eeprom" signature
+;
+;
 ;
 ;**** **** **** **** ****
 ; Up to 8K Bytes of In-System Self-Programmable Flash
@@ -2657,7 +2660,7 @@ Tag_Temporary_Storage:		DS	48		; Temporary storage for tags when updating "Eepro
 ;**** **** **** **** ****
 CSEG AT 1A00h            ; "Eeprom" segment
 EEPROM_FW_MAIN_REVISION		EQU	14		; Main revision of the firmware
-EEPROM_FW_SUB_REVISION		EQU	75		; Sub revision of the firmware
+EEPROM_FW_SUB_REVISION		EQU	85		; Sub revision of the firmware
 EEPROM_LAYOUT_REVISION		EQU	21		; Revision of the EEPROM layout
 
 Eep_FW_Main_Revision:		DB	EEPROM_FW_MAIN_REVISION			; EEPROM firmware main revision number
@@ -8184,8 +8187,6 @@ jmp_wait_for_power_on:
 	jmp	wait_for_power_on			; Go back to wait for power on
 ENDIF
 
-
-;**** **** **** **** **** **** **** **** **** **** **** **** ****
 
 $include (BLHeliTxPgm.inc)			; Include source code for programming the ESC with the TX
 $include (BLHeliBootLoad.inc)			; Include source code for bootloader
