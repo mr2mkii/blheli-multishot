@@ -239,6 +239,7 @@ $NOMOD51
 ;           Slightly modified throttle calibration
 ;           Improved startup, particularly for small motors
 ;           Improved smoothness
+; - Rev14.55 First attempt at porting multiprotocol routine from blheli_S...
 ;
 ;
 ;**** **** **** **** ****
@@ -4049,7 +4050,7 @@ beep_anfet_off:
 	jnb	ACC.0, beep_cnfet_off
 	CnFET_off			; CnFET off
 beep_cnfet_off:
-	mov	A, #150		; 25µs off
+	mov	A, #150		; 25Âµs off
 	djnz	ACC, $		
 	djnz	Temp2, beep_onoff
 	; Copy variable
