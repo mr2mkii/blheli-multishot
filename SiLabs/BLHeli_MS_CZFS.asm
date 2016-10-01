@@ -249,9 +249,8 @@ $NOMOD51
 ;           In order to have a good code for fixed wing planes, that has low voltage limiting, a main code spoolup time setting of 0 is made fast
 ;           Improved protection of bootloader and generally reduced risk of flash corruption
 ;           Some small changes for improved sync hold
-;	-Rev14.75 Modified input signal accept Multishot protocol
-;						Changed Defaults to more acceptable/appropriate values	
-;						Modified beeps to use the "Pit Stop" or "Fast Start" style tones
+; -Rev14.75 Modified input signal accept Multishot protocol	
+;	    Modified beeps to use "Crazy Start" type variable frequency tones. 
 ; - Rev14.8 Fixed bug where bootloader operation could be blocked by a defective "eeprom" signature
 ;
 ;
@@ -4151,72 +4150,71 @@ waitxms_m:	; Middle loop
 ;**** **** **** **** **** **** **** **** **** **** **** **** ****
 
 beep_f1:
-  mov	Temp3, #80   	; total tone play length
-	mov	Temp5, #120   		; number of delay loops to set starting frequency, frequency will increase as count is decremented.
-	mov Temp4, #4				; number of times to repeat tone at each fequency.
-	jmp music_outer_loop
+  	mov Temp3, #80   	; duration of tone
+	mov Temp5, #120   	; number of variable delay loops.
+	mov Temp4, #4		; number of times to repeat tone at each fequency.
+	jmp music_outer_loop	
 	
 beep_f2:
-	mov	Temp3, #60
-	mov	Temp5, #60
-	mov Temp4, #3
+	mov Temp3, #40		; creates a solid tone at freq #60, duration #40.	
+	mov Temp5, #60
+	mov Temp4, #255
 	jmp music_outer_loop
 	
 beep_f3:
-	mov	Temp3, #60
-	mov	Temp5, #50
+	mov Temp3, #60		; tone will start at freq #50, increasing freq every 10 cycles 
+	mov Temp5, #50		; after 50 cycles, variable delay loop will wrap, note will finish at freq #245.
 	mov Temp4, #10
 	jmp music_outer_loop
 
 beep_f4:
-  mov	Temp3, #4
-	mov	Temp5, #90
+  	mov Temp3, #4		; tone starts at freq #90 taking 4 freq steps down throughout its duration.
+	mov Temp5, #90
 	mov Temp4, #80
 	jmp music_outer_loop
 	
 music_outer_loop:
- 	mov	A, Beep_Strength
-	djnz	ACC, beep_start 
+ 	mov A, Beep_Strength
+	djnz ACC, beep_start 
 	ret
 	
 beep_start:	
 	mov A, Temp4
-	mov Temp1, A			; load temp1 with temp4 value, work with temp1 preserve temp4.
-	dec Temp5
+	mov Temp1, A		; load temp1 with temp4 value, work with temp1 preserve temp4.
+	dec Temp5		; decrement variable delay cycles (inecrease tone frequency)
 	
 music_inner_loop:
-		Mov A, Temp5 		; push variables onto the stack to preserve them during fet on/off macro
-		Push ACC
-		Mov A, Temp1
-		Push ACC
-	
-		ApFET_on
-		CnFET_on
-		mov	A, Beep_Strength	;volume
-		djnz	ACC, $
-		CnFET_off
-		ApFET_off
+	Mov A, Temp5 		; push variables onto the stack to preserve through fet on/off macro
+	Push ACC
+	Mov A, Temp1
+	Push ACC
 
-		Pop ACC				; pop variables off the stack, and restore them.
-		Mov Temp1, A  
+	ApFET_on
+	CnFET_on
+	mov A, Beep_Strength	;volume
+	djnz ACC, $
+	CnFET_off
+	ApFET_off
+
+	Pop ACC			; pop variables off the stack, and restore them.
+	Mov Temp1, A  
   	Pop B				  
-		Mov Temp5, B  
-		Mov Temp2, B  ; make copy of temp5 to work with.
-	 		
-; run minimum delay loop to keep our tone within the frquency range we're after (~3khz-800hz ideally)
-	 	mov Temp7, #10    ; number of times to run min delay loop (sets highest frequency note)
-music_base_delay:
-		mov	A, #180													  ;30us wait
-		djnz	ACC, $												; timing delay
-		djnz	Temp7, music_base_delay        			  ; ~300us delay loop 
+	Mov Temp5, B  
+	Mov Temp2, B  		; make copy of temp5 to work with.
+	mov Temp7, #10    	; number of times to run min delay loop (sets highest frequency note) 		
+				
+ 	
+music_base_delay:			; run minimum delay loop to keep our tone within range we want (~3khz-800hz idealy)
+	mov	A, #180			; 180 = ~30us
+	djnz	ACC, $			; timing delay
+	djnz	Temp7, music_base_delay ; (Temp7 x 31us) delay loop 
 
-music_variable_delay:														; changing delay (adjust tone frequency)
-			mov	A, #102														; 17us wait
-			djnz	ACC, $                        ; timing delay
-		djnz	Temp2, music_variable_delay  				  ; run this loop #Temp5 times
-	djnz	Temp1, music_inner_loop
-djnz	Temp3, music_outer_loop				      ; total length of tone
-
+music_variable_delay:					
+	mov	A, #120					; (~20us) size of variable delay loop									; 17us wait
+	djnz	ACC, $                        		; timing delay
+	djnz	Temp2, music_variable_delay  		; run this loop #Temp5 times
+    	djnz	Temp1, music_inner_loop			; number of times to cycle tone generation routine at current frequency
+djnz     Temp3, music_outer_loop			; set duration of tone
 ret
 
 
