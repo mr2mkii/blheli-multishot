@@ -56,9 +56,12 @@ $NOMOD51
 ;           	Improved protection of bootloader and generally reduced risk of flash corruption
 ;           	Some small changes for improved sync hold
 ; - Rev16.35 	Changed Defaults
-;				Added custom startup tone
-;				Added back alternating FET logic to Beeper Routine
+;		Added custom startup tone
 ; - Rev16.4 	Fixed bug where bootloader operation could be blocked by a defective "eeprom" signature
+; - Rev16.4	cmturn0 additions
+;		- Added selectedable startup tones, via the Beacon Delay config option
+;		- Added custom beacon tone, should be easier to hear & not heat up motors. 
+;		- Beacon delay hard coded to 10mins since the selection is being used for tones
 ;
 ;
 ;**** **** **** **** ****
@@ -2499,7 +2502,7 @@ beep_apwmfet_off:
 	jnb	ACC.0, beep_cpwmfet_off
 	CpwmFET_off		; CpwmFET off
 beep_cpwmfet_off:
-	mov	A, #150		; 25µs off
+	mov	A, #150		; 25Âµs off
 	djnz	ACC, $		
 	djnz	Temp2, beep_onoff
 	; Copy variable
