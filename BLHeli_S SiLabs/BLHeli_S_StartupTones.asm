@@ -3817,7 +3817,7 @@ validate_rcp_start:
 
 	; Arming sequence start
 arming_start:
-	jnb	Flags3.PGM_BIDIR, ($+5)
+	jnb	Flags3.PGM_BIDIR, ($+6)
 
 	ljmp	program_by_tx_checked	; Disable tx programming if bidirectional operation
 
