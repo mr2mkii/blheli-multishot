@@ -3969,7 +3969,7 @@ wait_for_power_on_loop:
 	mov	A, @Temp1
 
 ;	hardcode beacon delay to 5mins
-	mov Temp1, #250
+	mov Temp1, #100
 	jmp beep_delay_set
 ;	remove 2 lines above to restore OEM functionality	
 
