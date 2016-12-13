@@ -13,7 +13,7 @@ DEL Output\*.* /Q
 RMDIR Output
 MKDIR Output
 MKDIR Output\Hex
-SET Revision=REV16_51
+SET Revision=REV16_53
 SET KeilPath=C:\SiliconLabs\SimplicityStudio\v3\developer\toolchains\keil_8051\9.53\BIN
 
 @ECHO Revision: %Revision% >> MakeHex_Result.txt
