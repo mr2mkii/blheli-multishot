@@ -59,10 +59,10 @@ $NOMOD51
 ; - Rev16.4 Fixed bug where bootloader operation could be blocked by a defective "eeprom" signature
 ; - Rev16.5 Added support for DShot150, DShot300 and DShot600
 ; -Rev16.51 (cturn) Customized Default Values
-;					 	Added selectedable startup tones, via the Beacon Delay config option
-;						Added custom beacon tone, should be easier to hear & not heat up motors.
-;	-Rev16.52 Fix for 32khz Multishot Calibration bug
-; -Rev16.53 Added incremental arming tone for Dshot based on Dshot variant selected.
+;	    Added selectedable startup tones, via the Beacon Delay config option
+;	    Added custom beacon tone, should be easier to hear & not heat up motors.
+; -Rev16.52 Fix for 32khz Multishot Calibration bug
+; -Rev16.53 Added incremental arming tone for Dshot based on Dshot signal type detected.
 ;
 ;
 ;**** **** **** **** ****
@@ -2869,7 +2869,7 @@ beep_apwmfet_off:
 	jnb	ACC.0, beep_cpwmfet_off		
 	CpwmFET_off		; CpwmFET off		
 beep_cpwmfet_off:		
-	mov	A, #150		; 25µs off		
+	mov	A, #150		; 25Âµs off		
 	djnz	ACC, $				
 	djnz	Temp2, beep_onoff		
 	; Copy variable		
