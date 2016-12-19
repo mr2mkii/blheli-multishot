@@ -437,7 +437,7 @@ Temp_Storage:				DS	48		; Temporary storage
 ;**** **** **** **** ****
 CSEG AT 1A00h            ; "Eeprom" segment
 EEPROM_FW_MAIN_REVISION		EQU	16		; Main revision of the firmware
-EEPROM_FW_SUB_REVISION		EQU	51		; Sub revision of the firmware
+EEPROM_FW_SUB_REVISION		EQU	53		; Sub revision of the firmware
 EEPROM_LAYOUT_REVISION		EQU	33		; Revision of the EEPROM layout
 
 Eep_FW_Main_Revision:		DB	EEPROM_FW_MAIN_REVISION			; EEPROM firmware main revision number
@@ -486,7 +486,7 @@ Eep_Pgm_LED_Control:		DB	DEFAULT_PGM_LED_CONTROL			; EEPROM copy of programmed L
 Eep_Dummy:				DB	0FFh							; EEPROM address for safety reason
 
 CSEG AT 1A60h
-Eep_Name:					DB	"16.51_StartTones"				; Name tag (16 Bytes
+Eep_Name:					DB	"16.53_Tones"				; Name tag (16 Bytes
 
 ;**** **** **** **** ****
 Interrupt_Table_Definition		; SiLabs interrupts
