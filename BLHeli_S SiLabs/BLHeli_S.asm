@@ -3836,22 +3836,22 @@ Tone_Selection:
 	jz Startup_CZ 								
 	dec A		
 	jz Startup_GoT										
-	dec A		
-	jz HG_Bounce
     dec A
 	jz MHLL_Bounce
 	dec A
 	jz Lego_Bounce
+	dec A
+	jz TG_Bounce
 	ljmp OEM_Tones
 
-HG_Bounce:
-	ljmp Startup_HG	
-	
 MHLL_Bounce:
     ljmp Startup_MHLL
 	
 Lego_Bounce:
 	ljmp Startup_Lego
+	
+TG_Bounce:
+    ljmp Startup_TG
 										 		
 Startup_CZ:		
 	setb Flags3.CZ_TONES		
@@ -3954,87 +3954,6 @@ Startup_GoT:
 	call music_f4			
 	jmp startup_end
 			
-Startup_HG:			
-	call music_a4		
-	call wait10ms		
-	call music_a4		
-	call wait10ms		
-	call wait10ms		
-	call music_e		
-	call wait3ms		
-	call music_e		
-	call wait3ms		
-	call music_e		
-	call wait3ms		
-	call music_e		
-	call wait10ms		
-	call wait10ms		
-	call music_g4		
-	call music_g4		
-	call wait10ms		
-	call music_g4		
-	call music_g4		
-	call wait10ms		
-	call wait10ms		
-	call music_d		
-	call wait3ms		
-	call music_d		
-	call wait3ms		
-	call music_d		
-	call wait3ms		
-	call music_d		
-	call wait10ms		
-	call wait10ms		
-	call music_f4		
-	call music_f4		
-	call wait10ms		
-	call music_f4		
-	call music_f4		
-	call wait10ms		
-	call wait10ms		
-	call music_c		
-	call wait3ms		
-	call music_c		
-	call wait3ms		
-	call music_c		
-	call wait3ms		
-	call music_c		
-	call wait10ms		
-	call wait10ms		
-	call music_e4		
-	call wait10ms		
-	call music_e4		
-	call wait10ms		
-	call wait10ms		
-	call music_b4		
-	call wait3ms		
-	call music_b4		
-	call wait3ms		
-	call music_b4		
-	call wait3ms		
-	call music_b4		
-	call wait10ms		
-	call wait10ms		
-	call music_a4		
-	call music_a4		
-	call wait10ms		
-	call wait10ms		
-	call music_g4		
-	call music_g4		
-	call music_g4		
-	call music_g4		
-	call wait10ms		
-	call wait10ms		
-	call music_f4		
-	call music_f4		
-	call music_f4		
-	call music_f4		
-	call wait10ms		
-	call wait10ms		
-	call music_e4		
-	call music_e4
-	jmp startup_end
-
 Startup_MHLL:			
 	call music_e
 	call music_e
@@ -4187,6 +4106,71 @@ Startup_Lego:
 	call wait10ms
 	call music_f4
 	call music_f4
+	call wait10ms
+	jmp startup_end
+	
+Startup_TG:
+	call music_c ;65
+	call music_c
+	call music_c
+	call wait10ms
+	call music_g ;196
+	call music_g
+	call wait10ms
+	call music_g
+	call music_g
+	call wait10ms
+	call music_f ;88
+	call wait10ms
+	call music_e ;82
+	call music_e
+	call wait10ms
+	call music_f
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_d ;73
+	call music_d
+	call music_d
+	call wait10ms
+	call music_d
+	call music_d
+	call music_d
+	call wait10ms
+	call music_c
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_e
+	call music_e
+	call music_e
+	call wait10ms
+	call music_d
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_f
+	call music_f
+	call music_f
+	call wait10ms
+	call music_e
+	call wait10ms
+	call music_c
+	call music_c
+	call music_c
+	call wait10ms
+	call music_e
+	call music_e
+	call music_e
+	call wait10ms
+	call music_d
+	call music_d
+	call music_d
+	call music_d
+	call music_d
 	call wait10ms
 	jmp startup_end
 
