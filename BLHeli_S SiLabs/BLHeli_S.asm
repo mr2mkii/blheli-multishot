@@ -3554,9 +3554,21 @@ music_a4:
 	mov Temp4, #54			;number of delay loop1 cycles (tone frequency)		
 	mov Temp5, #2			;number of delay loop2 cycles (octave range?/large step?)		
 	jmp music
+	
+music_a4_sht:
+    mov Temp3, #100
+	mov Temp4, #54
+	mov Temp5, #2
+	jmp music
 			
 music_as4:		
 	mov	Temp3, #58 				
+	mov Temp4, #29		
+	mov Temp5, #2		
+	jmp music	
+
+music_as4_lng:		
+	mov	Temp3, #95 				
 	mov Temp4, #29		
 	mov Temp5, #2		
 	jmp music		
@@ -3648,7 +3660,7 @@ music_g:
 	mov	Temp3, #196 ;98 				
 	mov Temp4, #55		
 	mov Temp5, #1
-			
+	
 music:		
 	mov A, Temp5		
 	push ACC		
@@ -3825,11 +3837,21 @@ Tone_Selection:
 	dec A		
 	jz Startup_GoT										
 	dec A		
-	jz HG_Bounce		
+	jz HG_Bounce
+    dec A
+	jz MHLL_Bounce
+	dec A
+	jz Lego_Bounce
 	ljmp OEM_Tones
 
 HG_Bounce:
 	ljmp Startup_HG	
+	
+MHLL_Bounce:
+    ljmp Startup_MHLL
+	
+Lego_Bounce:
+	ljmp Startup_Lego
 										 		
 Startup_CZ:		
 	setb Flags3.CZ_TONES		
@@ -4011,7 +4033,162 @@ Startup_HG:
 	call wait10ms		
 	call music_e4		
 	call music_e4
-	jmp startup_end			
+	jmp startup_end
+
+Startup_MHLL:			
+	call music_e
+	call music_e
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_c
+	call music_c
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_e
+	call music_e
+	call wait200ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_d
+	call music_d
+	call wait200ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_g
+	call wait30ms
+	call music_g
+	call wait200ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_c
+	call music_c
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_e
+	call music_e
+	call wait10ms
+	call music_d
+	call music_d
+	call wait10ms
+	call music_c
+	call music_c
+	call wait10ms
+	jmp startup_end
+
+Startup_Lego:
+	;everything is awesome
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_a4
+	call music_a4
+	call music_a4
+	;everything is cool when you're part of a team
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_a4_sht
+	call wait10ms
+	call music_g4
+	call wait10ms
+	call music_f4
+	call wait10ms
+	call music_g4
+	call wait10ms
+	call music_a4_sht
+	call wait10ms
+	call music_g4
+	call music_g4
+	;everything is awesome
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_as4_lng
+	call wait10ms
+	call music_c
+	call music_c
+	call music_c
+	call music_c
+	call music_c
+	call music_c
+    call wait30ms
+	;when you're living in a dream
+	call music_c
+	call music_c
+	call wait10ms
+	call music_c
+	call music_c
+	call wait10ms
+	call music_a4
+	call wait10ms
+	call music_g4
+	call wait10ms
+	call music_g4
+	call wait10ms
+	call music_f4
+	call wait10ms
+	call music_f4
+	call music_f4
+	call wait10ms
+	jmp startup_end
 
 OEM_Tones:		
 	call beep_f1
