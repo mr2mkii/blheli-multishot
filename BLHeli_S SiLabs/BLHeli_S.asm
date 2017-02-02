@@ -4160,7 +4160,6 @@ Startup_TG:
 	call wait10ms
 	call music_c
 	call music_c
-	call music_c
 	call wait10ms
 	call music_e
 	call music_e
