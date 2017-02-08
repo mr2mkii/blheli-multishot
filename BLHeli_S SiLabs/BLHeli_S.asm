@@ -3709,7 +3709,7 @@ Protocol_ID:
 IDbeep_loop:
 	push ACC
 	call beep_f1
-	call wait10ms
+	call wait30ms
 	pop ACC
 	djnz	ACC, IDbeep_loop
 ret
