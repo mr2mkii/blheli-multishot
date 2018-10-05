@@ -11,3 +11,4 @@ Setting anything other than this will just use the BLHeli_S Defaults
 * 94 - Mary Had A Little Lamb
 * 95 - Lego Theme (Everything is Awesome)
 * 96 - Top Gun Theme
+* 97 - NEW - TBA
