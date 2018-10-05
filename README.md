@@ -1,7 +1,7 @@
 # BlHeli-Multishot
 BLheli-Multishot is port of blheli that adds support for the Multishot signal protocol.  The Multishot protocol uses a 5-25µs signal that allows refresh rates of up to 32 KHz, while maintaining 240 steps of resolution.
 
-This Johnnyruz version includes the updated startup tones developed for BLHeli_S targets. These are adjustable through the Beep Strength parameter.
+This Mr2MkII branch is a from Johnnyruz version to add even more startup tones developed for BLHeli_S targets. These are adjustable through the Beep Strength parameter.  
 
 Setting anything other than this will just use the BLHeli_S Defaults
 * 01 - Stealth (silent)
